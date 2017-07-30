@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.0/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<div id="example">
+    <my-component :columns="columns"
+    :users="users"
+    :selected="selected"></my-component>
+</div>
+<script>
+    Vue.component('my-component', {
+        template: '<div>' +
+        '<table border = 1>' +
+        '<tr>' +
+        '<th><input type="checkbox" v-model="selectAll"></th>' +
+        '<th align="left" v-for="column in columns">{{ column }}</th>' +
+        '</tr>' +
+        '<tr v-for="user in users">' +
+        '<td><input type="checkbox" v-model="selected" :value="user.parent" ></td>' +
+        '<td>{{user.id}}</td>' +
+        '<td>{{user.kid}}</td>' +
+        '<td>{{user.parent}}</td>' +
+        '<td>{{user.email}}</td>' +
+        '<td><label v-if="user.status">Agreed</label><label v-else>Not Agreed</label></td>' +
+        '<td><input type="checkbox" v-model="user.status" value="user.status"></td>' +
+        '</tr></table>' +
+        '<span>Checked names: {{ selected }} to send email</span>' +
+        '</div>',
+        props: {
+            'columns':null,
+            'users':null,
+            'selected':null
+
+        },
+        computed: {
+            selectAll: {
+                get: function () {
+                    var selected = [];
+                    this.users.forEach(function (user) {
+                        if(selected.indexOf(user.parent)==-1)
+                            selected.push(user.parent);
+                    });
+                    return this.users ? this.selected.length == selected.length : false;
+                },
+                set: function (value) {
+                    var selected = [];
+
+                    if (value) {
+                        this.users.forEach(function (user) {
+                            if(selected.indexOf(user.parent)==-1)
+                                selected.push(user.parent);
+                        });
+                    }
+
+                    this.selected = selected;
+                }
+            }
+        }
+    })
+    // create a root instance
+    new Vue({
+        el: '#example',
+        data: {
+            columns:['Id', 'Kid', 'Parent','Email','Status','Toggle Status'],
+            users: [
+//                { "id": "1", "kid": "Aabbee","parent": "Alpha", "email": "Alpha@yahoo.com", "status": false },
+//                { "id": "2", "kid": "Aabriella","parent": "Beta", "email": "Beta@yahoo.com", "status": false },
+//                { "id": "3", "kid": "Aahana","parent": "Gamma", "email": "Gamma@hotmail.com", "status": false },
+//                { "id": "4", "kid": "Aahliyah","parent": "Delta", "email": "Delta@hotmail.com", "status": false },
+//                { "id": "5", "kid": "Aahna","parent": "Delta", "email": "Delta@hotmail.com", "status": false },
+//                { "id": "6", "kid": "Aailiyah","parent": "Alpha", "email": "Alpha@yahoo.com", "status": false },
+//                { "id": "7", "kid": "Aaleah","parent": "Delta", "email": "Delta@hotmail.com", "status": false },
+//                { "id": "8", "kid": "Aalexi","parent": "Beta", "email": "Beta@yahoo.com", "status": false }
+            ],
+            selected: []
+        },
+        mounted: function () {
+            this.fetchData()
+        },
+        methods: {
+            fetchData () {
+                axios.get('http://localhost:3000/select')
+                    .then(response => {
+                        // JSON responses are automatically parsed.
+                        this.users = response.data;
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    })
+            }
+
+        }
+    })
+</script>
+</body>
+</html>
