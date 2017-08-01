@@ -30,4 +30,4 @@ app.use('/static', express.static('static'));
 app.listen(port);
 
 
-console.log('todo list RESTful API server started on: ' + port);
+console.log('Server started on: ' + port);

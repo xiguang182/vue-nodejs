@@ -21,32 +21,50 @@ var Task = {
     //     return db.query("update task set Title=?,Status=? where Id=?", [Task.Title, Task.Status, id], callback);
     // }
 
-    sendEmail: function (parent, callback) {
-        var smtpTransport = nodemailer.createTransport({
-            service: "Gmail",
-            auth: {
-                user: "vuejsdemo182@gmail.com",
-                pass: "5A02hau243"
+    getEmailByParent: function(parent, callback){
+        return db.query("select email from user where parent=?", [parent], callback);
+    },
+
+
+    sendEmail: function (parent) {
+
+
+
+        return Task.getEmailByParent(parent, function (err, result) {
+            if(err)
+            {
+                throw err;
+            }else
+            {
+                var smtpTransport = nodemailer.createTransport({
+                    service: "Gmail",
+                    auth: {
+                        user: "vuejsdemo182@gmail.com",
+                        pass: "5A02hau243"
+                    }
+                },{
+                    from: "Test<vuejsdemo182@gmail.com>"
+                });
+                var message = {
+                    to: "Test<vuejsdemo182@gmail.com>",
+                    subject: "Mail To " + result[0].email,
+                    text: "Hello "+parent+"  - this mail is sent from nodemailer library"
+                }
+                smtpTransport.sendMail(message, (error, info)=>{
+                    if(error){
+                        console.log(error);
+                    }else{
+                        console.log("Mail sent: " + response.message);
+                    }
+                    smtpTransport.close();
+                });
             }
-        },{
-            from: "Test<vuejsdemo182@gmail.com>"
+            return "Email sent";
+
         });
 
-        var message = {
-            to: "Test<vuejsdemo182@gmail.com>",
-            subject: "Mail from Nodemailer",
-            text: "Hello "+parent+"  - this mail is sent from nodemailer library"
-        }
 
 
-        smtpTransport.sendMail(message, (error, info)=>{
-            if(error){
-                console.log(error);
-            }else{
-                console.log("Mail sent: " + response.message);
-            }
-            smtpTransport.close();
-        });
 
     }
 };

@@ -17,12 +17,12 @@
         template: '<div>' +
         '<table border = 1>' +
         '<tr>' +
-        '<th><input type="checkbox" v-model="selectAll"></th>' +
+        '<th>Check to select</th>' +
         '<th align="left" v-for="column in columns">{{ column }}</th>' +
         '</tr>' +
         '<tr v-for="user in users">' +
         '<td><input type="checkbox" v-model="selected" :value="user.parent" ></td>' +
-        '<td>{{user.id}}</td>' +
+        '<td>{{user.iduser}}</td>' +
         '<td>{{user.kid}}</td>' +
         '<td>{{user.parent}}</td>' +
         '<td>{{user.email}}</td>' +
@@ -30,6 +30,8 @@
         '<td><input type="checkbox" v-model="user.status" value="user.status"></td>' +
         '</tr></table>' +
         '<span>Checked names: {{ selected }} to send email</span>' +
+        '<br>' +
+        '<button v-on:click="sendEmail">Send email</button>' +
         '</div>',
         props: {
             'columns':null,
@@ -37,29 +39,47 @@
             'selected':null
 
         },
+        method: {
+//            sendEmail: function (event) {
+//                this.selected.forEach(function (parent) {
+//                        axios.get('http://localhost:3000/email/'+ parent)
+//                            .then(response => {
+//                                // JSON responses are automatically parsed.
+//                                alert(response.data);
+//                            })
+//                            .catch(e => {
+//                                console.log(e);
+//                            })
+//                    }
+//
+//                )
+//
+//            }
+        },
         computed: {
-            selectAll: {
-                get: function () {
-                    var selected = [];
-                    this.users.forEach(function (user) {
-                        if(selected.indexOf(user.parent)==-1)
-                            selected.push(user.parent);
-                    });
-                    return this.users ? this.selected.length == selected.length : false;
-                },
-                set: function (value) {
-                    var selected = [];
-
-                    if (value) {
-                        this.users.forEach(function (user) {
-                            if(selected.indexOf(user.parent)==-1)
-                                selected.push(user.parent);
-                        });
-                    }
-
-                    this.selected = selected;
-                }
-            }
+            //<input type="checkbox" v-model="selectAll">
+//            selectAll: {
+//                get: function () {
+//                    var selected = [];
+//                    this.users.forEach(function (user) {
+//                        if(selected.indexOf(user.parent)==-1)
+//                            selected.push(user.parent);
+//                    });
+//                    return this.users ? this.selected.length == selected.length : false;
+//                },
+//                set: function (value) {
+//                    var selected = [];
+//
+//                    if (value) {
+//                        this.users.forEach(function (user) {
+//                            if(selected.indexOf(user.parent)==-1)
+//                                selected.push(user.parent);
+//                        });
+//                    }
+//
+//                    this.selected = selected;
+//                }
+//            }
         }
     })
     // create a root instance
@@ -83,6 +103,7 @@
             this.fetchData()
         },
         methods: {
+
             fetchData () {
                 axios.get('http://localhost:3000/select')
                     .then(response => {
